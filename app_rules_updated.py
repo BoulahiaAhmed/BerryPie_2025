@@ -154,12 +154,12 @@ def main():
 
     # New rules section (no user interference)
     st.divider()
-    st.subheader('👮 AI FCA Officer: Compliance Rule List')
+    st.subheader('👮 AI FCA Officer: Compliance Handbooks List')
 
-    st.write("The AI officer will automatically check and verify the following compliance rules:")
+    st.write("The AI officer will automatically check and verify the rules related to these compliance Handbooks:")
 
     # Create an expander for the rules section
-    with st.expander("📜 View the list of FCA compliance rules", expanded=False):
+    with st.expander("📜 View the list of FCA Compliance Handbooks", expanded=False):
         for i, elm in enumerate(fca_handbook_full_names):
             st.write(f"**{elm}**")
 
