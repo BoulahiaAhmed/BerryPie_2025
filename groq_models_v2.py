@@ -9,10 +9,10 @@ import time
 import streamlit as st
 
 
-#GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
-load_dotenv()
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+# load_dotenv()
+# GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
