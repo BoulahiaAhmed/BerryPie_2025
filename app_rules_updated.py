@@ -295,6 +295,7 @@ def main():
 
     st.divider()
     st.subheader('🏷️ Product Card Generation')
+    st.write("Let our AI generates metadata for your video")
     generate_model_card = st.button('Product card')
     if generate_model_card:
         with st.spinner(text="Generation In progress..."):
