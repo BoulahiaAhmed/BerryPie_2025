@@ -92,6 +92,7 @@ def get_book_rule_status_and_suggestion(handbook_name: str, transcript_review_ou
 # Define the main function
 def main():
     # Set the title of the app
+    st.image("./logo.png", width=200)
     st.markdown("<h1 style='text-align: center;'>Audio-Visual Compliance Checker 🔍📋</h1>", unsafe_allow_html=True)
     st.divider()
     st.subheader("🎬 Video Upload, Audio Extraction, and Transcription")
