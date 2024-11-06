@@ -166,6 +166,7 @@ def main():
     system_message = default_system_message
     st.divider()
     st.subheader('🚦 Running Compliance Checker for Audio/Visual Analysis')
+  st.write("Our AI-powered Compliance Checker will analyze your audio and visual content for regulatory compliance, offering corrections for any detected issues before publishing.")
     # Call the generate function
     generate_output = st.button('Check Compliance')
     if generate_output:
