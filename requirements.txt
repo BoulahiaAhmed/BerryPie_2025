@@ -1,10 +1,10 @@
 google-generativeai
-typing-extensions
+typing-extensions==4.11.0
 python-dotenv
-moviepy
-pydub
-streamlit
-tenacity
-pydantic
+moviepy==1.0.3
+pydub==0.25.1
+streamlit==1.37.1
+tenacity==8.5.0
+pydantic==2.7.1
 groq
-opencv-python-headless
+opencv-python-headless==4.10.0.84
