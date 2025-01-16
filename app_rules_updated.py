@@ -150,7 +150,7 @@ def main():
     #     st.info("Rate limit: 30 Request Per Minute")
 
     # default model selected 'llama-3.2-90b-text-preview'
-    model_name = 'llama-3.2-90b-text-preview'
+    model_name = 'llama-3.3-70b-versatile'
 
     # New rules section (no user interference)
     st.divider()
