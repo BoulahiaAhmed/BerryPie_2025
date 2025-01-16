@@ -112,7 +112,7 @@ def process_frame(base64_image):
                     ],
                 }
             ],
-            model="llama-3.2-11b-vision-preview",
+            model="llama-3.2-90b-vision-preview",
             response_format={"type": "json_object"},
             temperature=0.1,
             max_tokens=500,
@@ -202,7 +202,7 @@ def check_and_extract_disclaimer(extracted_texts):
                     "content": f"This is the list that contains the extracted text: {extracted_texts}",
                 }
             ],
-            model="llama-3.2-90b-text-preview",
+            model="llama-3.3-70b-versatile",
             response_format={"type": "json_object"},
             temperature=0.1,
             max_tokens=500,
