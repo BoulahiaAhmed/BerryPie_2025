@@ -4,8 +4,14 @@ from groq_models_v2 import fca_checker_results, video_card_generation, reviewed_
 from video_processing import transcribe_audio_with_whisper, extract_audio_from_video, video_media_processing
 import time
 import os
+import logging
 from concurrent.futures import ThreadPoolExecutor
 from difflib import SequenceMatcher
+
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 default_system_message = """
@@ -316,6 +322,8 @@ if 'sales_deck' in st.session_state:
     transcript = st.session_state['sales_deck']
 else:
     transcript = ""
+
+logging.debug("Transcript: ", transcript)
 
 # Initialize chatbot
 @st.cache_resource
