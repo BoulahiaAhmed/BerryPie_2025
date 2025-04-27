@@ -132,10 +132,9 @@ def main_app():
         st.write("Transcribing audio...")
         sales_deck = transcribe_audio_with_whisper(audio_path)
         st.text_area("Video Transcript:", sales_deck, height=400)
-    
-    # Initialization
-    if 'sales_deck' not in st.session_state:
-        st.session_state['sales_deck'] = sales_deck
+        # Initialization
+        if 'sales_deck' not in st.session_state:
+            st.session_state['sales_deck'] = sales_deck
 
     # st.divider()
     # st.subheader('✨ AI Model Selection')
