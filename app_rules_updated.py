@@ -323,7 +323,7 @@ if 'sales_deck' in st.session_state:
 else:
     transcript = ""
 
-logging.debug("Transcript: ", transcript)
+logging.info("Transcript: ", transcript)
 
 # Initialize chatbot
 @st.cache_resource
