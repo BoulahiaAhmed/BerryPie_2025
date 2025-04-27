@@ -331,6 +331,7 @@ def get_chatbot():
     return BerryPieChatbot(transcript)
 
 
+logging.info("under second page Transcript: ", transcript)
 chatbot = get_chatbot()
 
 
