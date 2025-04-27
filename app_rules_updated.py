@@ -274,6 +274,10 @@ def main_app():
             # Assuming transcript_text is generated from the reviewed_transcript function
             transcript_text = reviewed_transcript(sales_deck, partes_and_suggestions_to_follow, model_name)
 
+            # Initialization
+            if 'transcript_text' not in st.session_state:
+                st.session_state['transcript_text'] = transcript_text
+
             # Highlight the modified words
             highlighted_transcript = get_word_differences(sales_deck, transcript_text)
 
@@ -309,8 +313,10 @@ def main_app():
         st.markdown(video_card)
 
 
-# Example video transcript
-transcript = transcript_text
+if 'transcript_text' in st.session_state:
+    transcript = st.session_state['transcript_text']
+else:
+    transcript = ""
 
 # Initialize chatbot
 @st.cache_resource
