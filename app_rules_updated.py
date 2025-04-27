@@ -1,4 +1,5 @@
 import streamlit as st
+from chatbot import BerryPieChatbot
 from groq_models_v2 import fca_checker_results, video_card_generation, reviewed_transcript
 from video_processing import transcribe_audio_with_whisper, extract_audio_from_video, video_media_processing
 import time
@@ -89,8 +90,12 @@ def get_book_rule_status_and_suggestion(handbook_name: str, transcript_review_ou
     return handbook_rules_status
 
 
+global transcript_text
+transcript_text = ""
+
+
 # Define the main function
-def main():
+def main_app():
     # Set the title of the app
     st.image("./logo.png", width=200)
     st.markdown("<h1 style='text-align: center;'>Audio-Visual Compliance Checker 🔍📋</h1>", unsafe_allow_html=True)
@@ -302,6 +307,67 @@ def main():
         with st.spinner(text="Generation In progress..."):
             video_card = video_card_generation(sales_deck, model_name)
         st.markdown(video_card)
+
+
+# Example video transcript
+transcript = transcript_text
+
+# Initialize chatbot
+@st.cache_resource
+def get_chatbot():
+    return BerryPieChatbot(transcript)
+
+
+chatbot = get_chatbot()
+
+
+# Define your chatbot page
+def chatbot_page():
+    st.title("Virtual Assistant")
+    
+    # Chat message history container
+    chat_container = st.container()
+
+    # Display the previous conversation if exists
+    if 'messages' not in st.session_state:
+        st.session_state.messages = []
+
+    # Show chat history
+    for message in st.session_state.messages:
+        if message['role'] == 'user':
+            chat_container.chat_message("user").write(message['content'])
+        else:
+            chat_container.chat_message("assistant").write(message['content'])
+
+    # Input chat message
+    if prompt := st.chat_input("Hello, How can we help you?"):
+        # Append user message to history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        # Get the chatbot's response
+        response = chatbot.chat(prompt)
+        
+        # Append assistant's response to history
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        
+        # Redisplay the chat
+        for message in st.session_state.messages:
+            if message['role'] == 'user':
+                chat_container.chat_message("user").write(message['content'])
+            else:
+                chat_container.chat_message("assistant").write(message['content'])
+
+
+# Main function that controls the app
+def main():
+    # Use radio buttons as tabs
+    tab = st.radio("Navigation", ["Main App", "Chatbot"], index=0, horizontal=True)
+
+    # Display corresponding page based on the selected tab
+    if tab == "Main App":
+        main_app()
+    elif tab == "Chatbot":
+        chatbot_page()
 
 
 # Run the app
