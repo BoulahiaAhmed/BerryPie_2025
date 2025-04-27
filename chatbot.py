@@ -5,6 +5,7 @@ client = Groq()
 
 MODEL_NAME = "llama-3.3-70b-versatile"
 
+
 class BerryPieChatbot:
     def __init__(self, transcript: str):
         self.transcript = transcript

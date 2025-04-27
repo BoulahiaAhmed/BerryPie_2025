@@ -328,6 +328,7 @@ logging.info("Transcript: ", transcript)
 # Initialize chatbot
 @st.cache_resource
 def get_chatbot():
+    logging.info("under function Transcript: ", transcript)
     return BerryPieChatbot(transcript)
 
 
