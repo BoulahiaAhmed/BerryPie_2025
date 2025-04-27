@@ -318,30 +318,28 @@ def main_app():
         st.markdown(video_card)
 
 
-if 'sales_deck' in st.session_state:
-    transcript = st.session_state['sales_deck']
-else:
-    transcript = ""
-
-logging.info("Transcript: %s", transcript)
-
-# Initialize chatbot
-@st.cache_resource
-def get_chatbot():
-    logging.info("under function Transcript: %s", transcript)
-    return BerryPieChatbot(transcript)
-
-
-logging.info("under second page Transcript: %s", transcript)
-chatbot = get_chatbot()
-
-
 # Define your chatbot page
 def chatbot_page():
     st.title("Virtual Assistant")
     
     # Chat message history container
     chat_container = st.container()
+
+    if 'sales_deck' in st.session_state:
+        transcript = st.session_state['sales_deck']
+    else:
+        transcript = ""
+
+    logging.info("Transcript: %s", transcript)
+
+    # Initialize chatbot
+    @st.cache_resource
+    def get_chatbot():
+        logging.info("under function Transcript: %s", transcript)
+        return BerryPieChatbot(transcript)
+
+    logging.info("under second page Transcript: %s", transcript)
+    chatbot = get_chatbot()
 
     # Display the previous conversation if exists
     if 'messages' not in st.session_state:
