@@ -323,16 +323,16 @@ if 'sales_deck' in st.session_state:
 else:
     transcript = ""
 
-logging.info("Transcript: ", transcript)
+logging.info("Transcript: %s", transcript)
 
 # Initialize chatbot
 @st.cache_resource
 def get_chatbot():
-    logging.info("under function Transcript: ", transcript)
+    logging.info("under function Transcript: %s", transcript)
     return BerryPieChatbot(transcript)
 
 
-logging.info("under second page Transcript: ", transcript)
+logging.info("under second page Transcript: %s", transcript)
 chatbot = get_chatbot()
 
 
