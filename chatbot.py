@@ -13,13 +13,27 @@ class BerryPieChatbot:
         self._initialize_system_message()
 
     def _initialize_system_message(self):
-        system_prompt = f"""You are BerryPie, a helpful and friendly virtual assistant. 
-You specialize in answering questions about video content provided by the user.
-The video transcript is as follows:
-\"\"\"
-{self.transcript}
-\"\"\"
-Always base your answers on the transcript above. If the answer is not in the transcript, politely say you don't know."""
+        if self.transcript:
+            system_prompt = f"""
+            You are a helpful and friendly virtual assistant for BerryPie, a company specializing in financial products. 
+            Your role is to help users understand and ask questions about financial solutions discussed in video content.
+
+            The video transcript provided is:
+            \"\"\"
+            {self.transcript}
+            \"\"\"
+
+            Always base your answers strictly on the information from the transcript.
+            If the answer cannot be found in the transcript, politely inform the user that you don't have enough information to answer.
+            Maintain a friendly, professional, and supportive tone at all times.
+            """
+        else:
+            system_prompt = """
+            You are a helpful and friendly virtual assistant for BerryPie, a company specializing in financial products. 
+            At the moment, there is no financial product available for discussion because no video transcript was provided.
+            Kindly inform the user of this in a friendly, professional manner.
+            """
+
         self.history.append({"role": "system", "content": system_prompt})
 
     def chat(self, user_input: str) -> str:
