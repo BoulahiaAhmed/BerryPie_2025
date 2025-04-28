@@ -381,9 +381,9 @@ def main():
         orientation="horizontal",
     )
 
-    if selected == "Main App":
+    if selected == "Compliance Checker":
         main_app()
-    elif selected == "Chatbot":
+    elif selected == "Virtual Assistant":
         chatbot_page()
 
 
