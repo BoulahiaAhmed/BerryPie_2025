@@ -142,6 +142,7 @@ def main_app():
         # Initialization
         if 'sales_deck' not in st.session_state:
             st.session_state['sales_deck'] = sales_deck
+            logging.info("Sales deck initialized in session state.")
 
     # st.divider()
     # st.subheader('✨ AI Model Selection')
@@ -324,8 +325,10 @@ def chatbot_page():
     # Get the transcript from session state or set a default value
     if 'sales_deck' in st.session_state:
         transcript = st.session_state['sales_deck']
+        logging.info("Transcript loaded from session state.")
     else:
         transcript = ""
+        logging.warning("No transcript found in session state. Using default value.")
 
     logging.info("Transcript: %s", transcript)
 
