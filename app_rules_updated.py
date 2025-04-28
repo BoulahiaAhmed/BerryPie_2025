@@ -337,13 +337,22 @@ def chatbot_page():
     chatbot = get_chatbot()
 
     st.title("Virtual Assistant")
-    
+
     # Chat message history container
     chat_container = st.container()
 
     # Display the previous conversation if exists
     if 'messages' not in st.session_state:
         st.session_state.messages = []
+
+    # Function to stream text
+    def stream_response(text, container, delay=0.1):
+        streamed_text = ""
+        message_spot = container.empty()
+        for word in text.split():
+            streamed_text += word + " "
+            message_spot.markdown(streamed_text)
+            time.sleep(delay)
 
     # Show chat history
     for message in st.session_state.messages:
@@ -353,7 +362,7 @@ def chatbot_page():
             chat_container.chat_message("assistant").write(message['content'])
 
     # Input chat message
-    if prompt := st.chat_input("Hello, How can we help you?"):
+    if prompt := st.chat_input("Hello, how can we help you?"):
         # Append user message to history
         st.session_state.messages.append({"role": "user", "content": prompt})
         
@@ -363,12 +372,12 @@ def chatbot_page():
         # Append assistant's response to history
         st.session_state.messages.append({"role": "assistant", "content": response})
         
-        # Redisplay the chat
-        for message in st.session_state.messages:
-            if message['role'] == 'user':
-                chat_container.chat_message("user").write(message['content'])
-            else:
-                chat_container.chat_message("assistant").write(message['content'])
+        # Redisplay the new user message
+        chat_container.chat_message("user").write(prompt)
+        
+        # Stream the assistant's response
+        with chat_container.chat_message("assistant"):
+            stream_response(response, st.empty(), delay=0.02)  # Streaming assistant response
 
 
 def main():
