@@ -374,8 +374,8 @@ def chatbot_page():
 def main():
     selected = option_menu(
         menu_title=None,  # No main title
-        options=["Main App", "Chatbot"],
-        icons=["house", "robot"],  # Optional icons
+        options=["Compliance Checker", "Virtual Assistant"],  # The main options
+        icons=["check-circle", "chat"],  # Icons for each option
         menu_icon="cast",
         default_index=0,
         orientation="horizontal",
