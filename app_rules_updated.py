@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_option_menu import option_menu
 from chatbot import BerryPieChatbot
 from groq_models_v2 import fca_checker_results, video_card_generation, reviewed_transcript
 from video_processing import transcribe_audio_with_whisper, extract_audio_from_video, video_media_processing
@@ -370,15 +371,19 @@ def chatbot_page():
                 chat_container.chat_message("assistant").write(message['content'])
 
 
-# Main function that controls the app
 def main():
-    # Use radio buttons as tabs
-    tab = st.radio("Navigation", ["Main App", "Chatbot"], index=0, horizontal=True)
+    selected = option_menu(
+        menu_title=None,  # No main title
+        options=["Main App", "Chatbot"],
+        icons=["house", "robot"],  # Optional icons
+        menu_icon="cast",
+        default_index=0,
+        orientation="horizontal",
+    )
 
-    # Display corresponding page based on the selected tab
-    if tab == "Main App":
+    if selected == "Main App":
         main_app()
-    elif tab == "Chatbot":
+    elif selected == "Chatbot":
         chatbot_page()
 
 
