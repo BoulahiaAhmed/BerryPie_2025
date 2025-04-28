@@ -333,11 +333,16 @@ def chatbot_page():
     logging.info("Transcript: %s", transcript)
 
     # Initialize chatbot
-    @st.cache_resource
-    def get_chatbot():
-        return BerryPieChatbot(transcript)
+    # @st.cache_resource
+    # def get_chatbot():
+    #     return BerryPieChatbot(transcript)
 
-    chatbot = get_chatbot()
+    # chatbot = get_chatbot()
+    # Initialize chatbot only once per session
+    if 'chatbot' not in st.session_state:
+        st.session_state.chatbot = BerryPieChatbot(transcript)
+
+    chatbot = st.session_state.chatbot
 
     st.title("Virtual Assistant")
 
