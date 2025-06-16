@@ -144,6 +144,11 @@ def main_app():
             st.session_state['sales_deck'] = sales_deck
             logging.info("Sales deck initialized in session state.")
 
+    st.subheader("📄 Prospectus or Fact Sheet PDF Upload")
+
+    # File uploader for PDF files
+    pdf_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+
     # st.divider()
     # st.subheader('✨ AI Model Selection')
     # # Dropdown to select the model
