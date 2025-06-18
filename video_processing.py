@@ -6,7 +6,6 @@ import cv2
 import base64
 import json
 import logging
-import streamlit as st
 from groq import Groq
 from dotenv import load_dotenv
 

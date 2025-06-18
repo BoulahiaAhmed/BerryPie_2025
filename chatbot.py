@@ -1,4 +1,10 @@
+import json
+import os
 from groq import Groq
+from tools import Tools_list
+from pdf_parsing import rag_tool
+
+
 
 # Initialize the Groq client (no need to manually pass API key if set in env variable GROQ_API_KEY)
 client = Groq()
@@ -7,12 +13,21 @@ MODEL_NAME = "llama-3.3-70b-versatile"
 
 
 class BerryPieChatbot:
-    def __init__(self, transcript: str):
+    def __init__(self, transcript: str, vector_db=None):
         self.transcript = transcript
+        self.vectordb = vector_db
         self.history = []
         self._initialize_system_message()
 
     def _initialize_system_message(self):
+        rag_tool_note = (
+            "In addition, you are equipped with a specialized tool named `rag_tool`, "
+            "which allows you to search through uploaded PDF documents such as prospectuses and fact sheets. "
+            "If the transcript does not contain the answer, and these documents are available, "
+            "use the `rag_tool` function to retrieve relevant information to support the user’s query. "
+            "Make sure to stay helpful, clear, and professional when responding based on this document content."
+        ) if self.vectordb else ""
+
         if self.transcript:
             system_prompt = f"""
             You are a helpful and friendly virtual assistant for BerryPie, a company specializing in financial products. 
@@ -24,7 +39,11 @@ class BerryPieChatbot:
             \"\"\"
 
             Always base your answers strictly on the information from the transcript.
+
             If the answer cannot be found in the transcript, politely inform the user that you don't have enough information to answer.
+
+            {rag_tool_note}
+
             Maintain a friendly, professional, and supportive tone at all times.
             """
         else:
@@ -39,16 +58,52 @@ class BerryPieChatbot:
     def chat(self, user_input: str) -> str:
         self.history.append({"role": "user", "content": user_input})
 
+        # Make the initial API call to Groq
         response = client.chat.completions.create(
             model=MODEL_NAME,
             messages=self.history,
+            tools=Tools_list if self.vectordb else None,
+            tool_choice="auto" if self.vectordb else None,
             temperature=0.2,
             max_tokens=1024,
             top_p=1,
             stream=False  # Not streaming inside the function, returning full reply at once
         )
 
-        assistant_reply = response.choices[0].message.content
-        self.history.append({"role": "assistant", "content": assistant_reply})
+        response_message = response.choices[0].message.content
+        tool_calls = response_message.tool_calls
 
-        return assistant_reply
+        if tool_calls:
+            # Define the available tools that can be called by the LLM
+            available_functions = {
+                "rag_tool": rag_tool,
+            }
+            # Add the LLM's response to the conversation
+            self.history.append(response_message)
+
+            # Process each tool call
+            for tool_call in tool_calls:
+                function_name = tool_call.function.name
+                function_to_call = available_functions[function_name]
+                function_args = json.loads(tool_call.function.arguments)
+                # Call the tool and get the response
+                function_response = function_to_call(
+                    query=function_args.get("query"), vectordb=self.vectordb
+                )
+                # Add the tool response to the conversation
+                self.history.append(
+                    {
+                        "tool_call_id": tool_call.id,
+                        "role": "tool",  # Indicates this message is from tool use
+                        "name": function_name,
+                        "content": json.dumps(function_response, default=str),
+                    }
+                )
+            # Make a second API call with the updated conversation
+            second_response = client.chat.completions.create(
+                model=MODEL_NAME,
+                messages=self.history
+            )
+            # Return the final response
+            return second_response.choices[0].message.content
+        

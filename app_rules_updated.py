@@ -1,13 +1,16 @@
-import streamlit as st
-from streamlit_option_menu import option_menu
-from chatbot import BerryPieChatbot
-from groq_models_v2 import fca_checker_results, video_card_generation, reviewed_transcript
-from video_processing import transcribe_audio_with_whisper, extract_audio_from_video, video_media_processing
 import time
 import os
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from difflib import SequenceMatcher
+import streamlit as st
+from streamlit_option_menu import option_menu
+
+from chatbot import BerryPieChatbot
+from groq_models_v2 import fca_checker_results, video_card_generation, reviewed_transcript
+from video_processing import transcribe_audio_with_whisper, extract_audio_from_video, video_media_processing
+from pdf_parsing import process_pdf
+
 
 
 # Set up logging
@@ -148,6 +151,31 @@ def main_app():
 
     # File uploader for PDF files
     pdf_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+    if pdf_file is not None:
+        # Create the directory if it doesn't exist
+        temp_pdf_dir = "temp_pdf"
+        os.makedirs(temp_pdf_dir, exist_ok=True)
+        # Save the uploaded PDF to the directory
+        temp_pdf_path = os.path.join(temp_pdf_dir, pdf_file.name)
+        with open(temp_pdf_path, "wb") as f:
+            f.write(pdf_file.read())
+        # If a PDF file is uploaded, parse it and extract the text & create the vectorDB
+        vector_db = process_pdf(temp_pdf_path)
+        st.success("PDF processed & vectorDB created!")
+
+    else:
+        vector_db = None
+        st.info("no PDF file to proceed with the RAG.")
+    
+    # update the session state with the sales deck and vector_db
+    if 'vector_db' not in st.session_state:
+        st.session_state['vector_db'] = vector_db
+        logging.info("vector_db added in session state.")
+
+
+
+
+
 
     # st.divider()
     # st.subheader('✨ AI Model Selection')
@@ -334,18 +362,20 @@ def chatbot_page():
     else:
         transcript = ""
         logging.warning("No transcript found in session state. Using default value.")
-
     logging.info("Transcript: %s", transcript)
 
-    # Initialize chatbot
-    # @st.cache_resource
-    # def get_chatbot():
-    #     return BerryPieChatbot(transcript)
+    if 'vector_db' in st.session_state:
+        vector_db = st.session_state['vector_db']
+        logging.info("Vector DB loaded from session state.")
+    else:
+        vector_db = None
+        logging.info("No vector DB found in session state. Using default value.")
 
-    # chatbot = get_chatbot()
-    # Initialize chatbot only once per session
     if 'chatbot' not in st.session_state:
-        st.session_state.chatbot = BerryPieChatbot(transcript)
+        st.session_state.chatbot = BerryPieChatbot(
+            transcript,
+            vector_db=vector_db
+            )
 
     chatbot = st.session_state.chatbot
 
