@@ -16,21 +16,25 @@ logger = logging.getLogger(__name__)
 
 # Function to process PDF files and create a retriever
 @st.cache_resource
-def process_pdf(paths: List[str]):
-    # 1. Load PDFs
-    all_docs = []
+def process_pdf(paths: List[str]) -> str:
+    all_text = []
     for path in paths:
         try:
             loader = PyPDFLoader(path)
             docs = loader.load()
             logger.info(f"Loaded document from {path}")
-            all_docs.extend(docs)
+            
+            # Extract text from each Document object
+            for doc in docs:
+                all_text.append(doc.page_content)  # Access the page_content attribute
+                
         except Exception as e:
             logger.error(f"Error loading {path}: {str(e)}")
             continue
-        # Combine all text with double newlines between pages
-    combined_text = "\n\n".join(all_docs)
-    logger.info(f"Extracted {len(all_docs)} pages of text")
+    
+    # Combine all text with double newlines between pages
+    combined_text = "\n\n".join(all_text)  # Now joining strings, not Documents
+    logger.info(f"Extracted {len(all_text)} pages of text")
     return combined_text
 
     # # 2. Split documents
