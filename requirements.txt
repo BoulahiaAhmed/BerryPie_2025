@@ -1,21 +1,20 @@
-google-generativeai>=0.3.2
-typing-extensions==4.11.0
+google-generativeai
 python-dotenv
-moviepy==1.0.3
-pydub==0.25.1
-streamlit==1.37.1
+moviepy
+pydub
+streamlit
 streamlit-option-menu
-tenacity==8.5.0
-pydantic==1.10.14  # Downgrade to v1 for compatibility
-pydantic-settings==2.2.1  
-rich>=10.14.0,<14  # Add this line to enforce correct version
+tenacity
+pydantic
+pydantic-settings
+rich
 groq
-opencv-python-headless==4.10.0.84
-langchain==0.1.17  # Pin to specific version
-langchain-community==0.0.32
-langchain-core==0.1.47
-langchain-google-genai==0.0.10
-chromadb==0.4.24
-unstructured==0.12.6
-pypdf==3.17.4
-langsmith==0.1.31  # Add explicit version
+opencv-python-headless
+langchain
+langchain-community
+langchain-core
+langchain-google-genai
+chromadb
+unstructured
+pypdf
+langsmith
