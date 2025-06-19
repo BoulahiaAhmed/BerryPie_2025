@@ -5,40 +5,55 @@ from typing import List
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Set up Streamlit secrets for Google API key   
-os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
+# os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 # Function to process PDF files and create a retriever
 @st.cache_resource
 def process_pdf(paths: List[str]):
+    # 1. Load PDFs
     all_docs = []
     for path in paths:
-        loader = PyPDFLoader(path)
-        docs = loader.load()
-        logger.info(f"Loaded document from {path}")
-        all_docs.extend(docs)
+        try:
+            loader = PyPDFLoader(path)
+            docs = loader.load()
+            logger.info(f"Loaded document from {path}")
+            all_docs.extend(docs)
+        except Exception as e:
+            logger.error(f"Error loading {path}: {str(e)}")
+            continue
 
+    # 2. Split documents
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1500,
-        chunk_overlap=200,  # Correct parameter name
+        chunk_overlap=200,
+        separators=["\n\n", "\n", " ", ""]  # Better handling for PDFs
     )
     chunks = text_splitter.split_documents(all_docs)
-    logger.info(f"Split documents into {len(chunks)} chunks")
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model="models/gemini-embedding-exp-03-07",
-        task_type="RETRIEVAL_DOCUMENT"
+    logger.info(f"Split into {len(chunks)} chunks")
+
+    # 3. Initialize Embeddings (HuggingFace)
+    model_name = "sentence-transformers/all-MiniLM-L6-v2"  # Lightweight & effective
+    embeddings = HuggingFaceEmbeddings(
+        model_name=model_name,
+        model_kwargs={'device': 'cpu'},  # Force CPU for Streamlit
+        encode_kwargs={'normalize_embeddings': True}  # Better for similarity
     )
+
+    # 4. Create FAISS index
     vectordb = FAISS.from_documents(
         documents=chunks,
         embedding=embeddings
     )
-    logger.info("Created FAISS vector store (in-memory)")
+    logger.info("Created FAISS vector store")
+    # Save
+    vectordb.save_local("faiss_index")
     return vectordb
 
 
