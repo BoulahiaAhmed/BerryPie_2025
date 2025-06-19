@@ -1,8 +1,6 @@
 import json
 import os
 from groq import Groq
-from tools import Tools_list
-from pdf_parsing import rag_tool
 
 
 
