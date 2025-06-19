@@ -18,5 +18,5 @@ chromadb
 unstructured
 pypdf
 pydantic-settings
-
+pdfminer
 
