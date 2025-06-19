@@ -24,7 +24,11 @@ def process_pdf(paths: List[str]):
         logger.info(f"Loaded document from {path}")
         all_docs.extend(docs)
 
-    chunks = RecursiveCharacterTextSplitter(chunk_size=1500, overlap=200).split_documents(all_docs)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1500,
+        chunk_overlap=200,  # Correct parameter name
+    )
+    chunks = text_splitter.split_documents(all_docs)
     logger.info(f"Split documents into {len(chunks)} chunks")
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/gemini-embedding-exp-03-07",
