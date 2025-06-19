@@ -1,4 +1,4 @@
-google-generativeai
+google-generativeai>=0.3.2
 typing-extensions==4.11.0
 python-dotenv
 moviepy==1.0.3
@@ -6,15 +6,15 @@ pydub==0.25.1
 streamlit==1.37.1
 streamlit-option-menu
 tenacity==8.5.0
-pydantic==2.7.1
+pydantic==1.10.14  # Downgrade to v1 for compatibility
+pydantic-settings==2.2.1  # Add this for Pydantic v2 features if needed
 groq
 opencv-python-headless==4.10.0.84
-langchain>=0.1.17
-langchain-community>=0.0.32
-langchain-core>=0.1.47
-langchain-google-genai>=0.0.10
-google-generativeai>=0.3.2
-chromadb>=0.4.24
-unstructured>=0.12.6
-pypdf>=3.17.4
-
+langchain==0.1.17  # Pin to specific version
+langchain-community==0.0.32
+langchain-core==0.1.47
+langchain-google-genai==0.0.10
+chromadb==0.4.24
+unstructured==0.12.6
+pypdf==3.17.4
+langsmith==0.1.31  # Add explicit version
