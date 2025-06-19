@@ -4,7 +4,7 @@ import logging
 from typing import List
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma  # or Pinecone, Chroma
+from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 # Set up logging
@@ -34,8 +34,11 @@ def process_pdf(paths: List[str]):
         model="models/gemini-embedding-exp-03-07",
         task_type="RETRIEVAL_DOCUMENT"
     )
-    vectordb = Chroma.from_documents(chunks, embeddings)
-    logger.info("Created vector store from document chunks")
+    vectordb = FAISS.from_documents(
+        documents=chunks,
+        embedding=embeddings
+    )
+    logger.info("Created FAISS vector store (in-memory)")
     return vectordb
 
 
