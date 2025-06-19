@@ -7,7 +7,8 @@ streamlit==1.37.1
 streamlit-option-menu
 tenacity==8.5.0
 pydantic==1.10.14  # Downgrade to v1 for compatibility
-pydantic-settings==2.2.1  # Add this for Pydantic v2 features if needed
+pydantic-settings==2.2.1  
+rich>=10.14.0,<14  # Add this line to enforce correct version
 groq
 opencv-python-headless==4.10.0.84
 langchain==0.1.17  # Pin to specific version
