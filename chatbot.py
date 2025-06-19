@@ -18,45 +18,55 @@ class BerryPieChatbot:
         self._initialize_system_message()
 
     def _initialize_system_message(self):
-        doc_content_note = (
-            f"""In addition, you are equipped with a the content of a document,
-            the documents are prospectuses and fact sheets.
-            If the transcript does not contain the answer, and these documents are available,
-            use the provided context to answer the user’s query.
-            Make sure to stay helpful, clear, and professional when responding based on this document content.
-            The context provided is:
+        """Initialize the system message with transcript and document context."""
+        # Document content note (only if doc_content exists)
+        doc_context = ""
+        if self.doc_content:
+            doc_context = f"""
+            ADDITIONAL CONTEXT:
+            You also have access to financial documents (prospectuses and fact sheets).
+            If the transcript doesn't contain the answer but these documents do, use them to respond.
+            Document content:
             \"\"\"
-            {self.doc_content}
+            {self.doc_content}  # Limit to first 10k chars to avoid token limits
             \"\"\"
-            If the document content is not available, inform the user politely that you don't have enough information to answer."""
-        ) if self.doc_content else ""
-
+            If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
+            """
+        
+        # Main system prompt construction
         if self.transcript:
             system_prompt = f"""
-            You are a helpful and friendly virtual assistant for BerryPie, a company specializing in financial products. 
-            Your role is to help users understand and ask questions about financial solutions discussed in video content.
-
-            The video transcript provided is:
+            ROLE: Financial assistant for BerryPie (investment products expert)
+            TONE: Professional yet approachable (clear, precise, compliant)
+            
+            PRIMARY SOURCE: Video transcript:
             \"\"\"
-            {self.transcript}
+            {self.transcript[:15000]}  # Limit transcript length
             \"\"\"
-
-            Always base your answers strictly on the information from the transcript.
-
-            If the answer cannot be found in the transcript, politely inform the user that you don't have enough information to answer.
-
-            {doc_content_note}
-
-            Maintain a friendly, professional, and supportive tone at all times.
+            
+            INSTRUCTIONS:
+            1. Prioritize answers from the transcript
+            2. Only use document context when transcript is insufficient
+            3. For unavailable information: "Based on my resources, I can't provide a definitive answer."
+            4. Never speculate - admit uncertainty when needed
+            
+            {doc_context}
+            
+            RESPONSE FORMAT:
+            - Start with clear answer
+            - Add supporting details when relevant
+            - End with "Does this help?" or similar
             """
         else:
             system_prompt = """
-            You are a helpful and friendly virtual assistant for BerryPie, a company specializing in financial products. 
-            At the moment, there is no financial product available for discussion because no video transcript was provided.
-            Kindly inform the user of this in a friendly, professional manner.
+            You're BerryPie's financial assistant, but no product information is currently available.
+            Respond professionally: "I don't have any active financial product details to reference at this time.
+            Would you like general information about our services?"
             """
-
-        self.history.append({"role": "system", "content": system_prompt})
+        
+        # Clean up whitespace and newlines
+        system_prompt = "\n".join(line.strip() for line in system_prompt.split("\n"))
+        self.history.append({"role": "system", "content": system_prompt.strip()})
 
     def chat(self, user_input: str) -> str:
         self.history.append({"role": "user", "content": user_input})
