@@ -1,3 +1,4 @@
+python>=3.9,<3.13
 google-generativeai
 typing-extensions
 python-dotenv
@@ -19,5 +20,4 @@ unstructured
 pypdf
 pydantic-settings
 pdfminer
-sqlite3
 
