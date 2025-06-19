@@ -167,17 +167,17 @@ def main_app():
             saved_paths.append(temp_pdf_path)
 
         # Pass list of saved PDF paths
-        vector_db = process_pdf(saved_paths)
+        doc_content = process_pdf(saved_paths)
 
-        st.success("All PDFs processed and vector DB created!")
+        st.success("All PDFs processed ")
     else:
-        vector_db = None
+        doc_content = None
         st.info("No PDF files uploaded.")
 
-    # update the session state with the sales deck and vector_db
-    if 'vector_db' not in st.session_state:
-        st.session_state['vector_db'] = vector_db
-        logging.info("vector_db added in session state.")
+    # update the session state
+    if 'doc_content' not in st.session_state:
+        st.session_state['doc_content'] = doc_content
+        logging.info("doc_content added in session state.")
 
 
 
@@ -370,18 +370,18 @@ def chatbot_page():
         logging.warning("No transcript found in session state. Using default value.")
     logging.info("Transcript: %s", transcript)
 
-    if 'vector_db' in st.session_state:
-        vector_db = st.session_state['vector_db']
-        logging.info("Vector DB loaded from session state.")
+    if 'doc_content' in st.session_state:
+        doc_content = st.session_state['doc_content']
+        logging.info("doc_content loaded from session state.")
     else:
-        vector_db = None
-        logging.info("No vector DB found in session state. Using default value.")
+        doc_content = None
+        logging.info("No doc_content found in session state. Using default value.")
 
     if 'chatbot' not in st.session_state:
         st.session_state.chatbot = BerryPieChatbot(
             transcript,
-            vector_db=vector_db
-            )
+            doc_content=doc_content
+        )
 
     chatbot = st.session_state.chatbot
 

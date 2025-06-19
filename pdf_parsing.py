@@ -28,33 +28,37 @@ def process_pdf(paths: List[str]):
         except Exception as e:
             logger.error(f"Error loading {path}: {str(e)}")
             continue
+        # Combine all text with double newlines between pages
+    combined_text = "\n\n".join(all_docs)
+    logger.info(f"Extracted {len(all_docs)} pages of text")
+    return combined_text
 
-    # 2. Split documents
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1500,
-        chunk_overlap=200,
-        separators=["\n\n", "\n", " ", ""]  # Better handling for PDFs
-    )
-    chunks = text_splitter.split_documents(all_docs)
-    logger.info(f"Split into {len(chunks)} chunks")
+    # # 2. Split documents
+    # text_splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=1500,
+    #     chunk_overlap=200,
+    #     separators=["\n\n", "\n", " ", ""]  # Better handling for PDFs
+    # )
+    # chunks = text_splitter.split_documents(all_docs)
+    # logger.info(f"Split into {len(chunks)} chunks")
 
-    # 3. Initialize Embeddings (HuggingFace)
-    model_name = "sentence-transformers/all-MiniLM-L6-v2"  # Lightweight & effective
-    embeddings = HuggingFaceEmbeddings(
-        model_name=model_name,
-        model_kwargs={'device': 'cpu'},  # Force CPU for Streamlit
-        encode_kwargs={'normalize_embeddings': True}  # Better for similarity
-    )
+    # # 3. Initialize Embeddings (HuggingFace)
+    # model_name = "sentence-transformers/all-MiniLM-L6-v2"  # Lightweight & effective
+    # embeddings = HuggingFaceEmbeddings(
+    #     model_name=model_name,
+    #     model_kwargs={'device': 'cpu'},  # Force CPU for Streamlit
+    #     encode_kwargs={'normalize_embeddings': True}  # Better for similarity
+    # )
 
-    # 4. Create FAISS index
-    vectordb = FAISS.from_documents(
-        documents=chunks,
-        embedding=embeddings
-    )
-    logger.info("Created FAISS vector store")
-    # Save
-    vectordb.save_local("faiss_index")
-    return vectordb
+    # # 4. Create FAISS index
+    # vectordb = FAISS.from_documents(
+    #     documents=chunks,
+    #     embedding=embeddings
+    # )
+    # logger.info("Created FAISS vector store")
+    # # Save
+    # vectordb.save_local("faiss_index")
+    # return vectordb
 
 
 # Function to search the retriever with a query
