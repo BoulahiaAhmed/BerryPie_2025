@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import logging
 from typing import List
-from langchain.document_loaders import UnstructuredPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma  # or Pinecone, Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -19,7 +19,8 @@ os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 def process_pdf(paths: List[str]):
     all_docs = []
     for path in paths:
-        docs = UnstructuredPDFLoader(path).load()
+        loader = PyPDFLoader(path)
+        docs = loader.load()
         logger.info(f"Loaded document from {path}")
         all_docs.extend(docs)
 
