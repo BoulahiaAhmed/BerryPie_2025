@@ -149,29 +149,35 @@ def main_app():
 
     st.subheader("📄 Prospectus or Fact Sheet PDF Upload")
 
-    # File uploader for PDF files
-    pdf_file = st.file_uploader("Upload a PDF file", type=["pdf"])
-    if pdf_file is not None:
-        # Create the directory if it doesn't exist
+    # File uploader for multiple PDFs
+    pdf_files = st.file_uploader(
+        "Upload one or more PDF files", type=["pdf"],
+        accept_multiple_files=True
+        )
+
+    if pdf_files:
         temp_pdf_dir = "temp_pdf"
         os.makedirs(temp_pdf_dir, exist_ok=True)
-        # Save the uploaded PDF to the directory
-        temp_pdf_path = os.path.join(temp_pdf_dir, pdf_file.name)
-        with open(temp_pdf_path, "wb") as f:
-            f.write(pdf_file.read())
-        # If a PDF file is uploaded, parse it and extract the text & create the vectorDB
-        vector_db = process_pdf(temp_pdf_path)
-        st.success("PDF processed & vectorDB created!")
 
+        saved_paths = []
+        for pdf_file in pdf_files:
+            temp_pdf_path = os.path.join(temp_pdf_dir, pdf_file.name)
+            with open(temp_pdf_path, "wb") as f:
+                f.write(pdf_file.read())
+            saved_paths.append(temp_pdf_path)
+
+        # Pass list of saved PDF paths
+        vector_db = process_pdf(saved_paths)
+
+        st.success("All PDFs processed and vector DB created!")
     else:
         vector_db = None
-        st.info("no PDF file to proceed with the RAG.")
-    
+        st.info("No PDF files uploaded.")
+
     # update the session state with the sales deck and vector_db
     if 'vector_db' not in st.session_state:
         st.session_state['vector_db'] = vector_db
         logging.info("vector_db added in session state.")
-
 
 
 

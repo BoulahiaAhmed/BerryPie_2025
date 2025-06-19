@@ -1,24 +1,36 @@
 import streamlit as st
 import os
+import logging
+from typing import List
 from langchain.document_loaders import UnstructuredPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma  # or Pinecone, Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Set up Streamlit secrets for Google API key   
 os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
-
 # Function to process PDF files and create a retriever
 @st.cache_resource
-def process_pdf(path):
-    docs = UnstructuredPDFLoader(path).load()
-    chunks = RecursiveCharacterTextSplitter(chunk_size=1500, overlap=200).split_documents(docs)
+def process_pdf(paths: List[str]):
+    all_docs = []
+    for path in paths:
+        docs = UnstructuredPDFLoader(path).load()
+        logger.info(f"Loaded document from {path}")
+        all_docs.extend(docs)
+
+    chunks = RecursiveCharacterTextSplitter(chunk_size=1500, overlap=200).split_documents(all_docs)
+    logger.info(f"Split documents into {len(chunks)} chunks")
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/gemini-embedding-exp-03-07",
         task_type="RETRIEVAL_DOCUMENT"
     )
     vectordb = Chroma.from_documents(chunks, embeddings)
+    logger.info("Created vector store from document chunks")
     return vectordb
 
 
