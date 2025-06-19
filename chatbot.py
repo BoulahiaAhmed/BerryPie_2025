@@ -62,8 +62,8 @@ class BerryPieChatbot:
         response = client.chat.completions.create(
             model=MODEL_NAME,
             messages=self.history,
-            tools=Tools_list if self.vectordb else None,
-            tool_choice="auto" if self.vectordb else None,
+            tools=Tools_list,  # if self.vectordb else None,
+            tool_choice="auto",  # if self.vectordb else None,
             temperature=0.2,
             max_tokens=1024,
             top_p=1,
