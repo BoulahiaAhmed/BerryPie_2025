@@ -59,8 +59,10 @@ class BerryPieChatbot:
             - End with "Does this help?" or similar
             """
 
-        if self.transcript:
+        if self.transcript and self.doc_content:
             system_prompt = video_prompt + doc_context
+        elif self.transcript and self.doc_content == "":
+            system_prompt = video_prompt
         else:
             system_prompt = """
             You're BerryPie's financial assistant, but no product information is currently available.
