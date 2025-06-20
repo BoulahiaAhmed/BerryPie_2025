@@ -1,8 +1,11 @@
 import json
 import os
 from groq import Groq
+import logging
 
 
+#set logger
+logging.basicConfig(level=logging.INFO)
 
 # Initialize the Groq client (no need to manually pass API key if set in env variable GROQ_API_KEY)
 client = Groq()
@@ -64,7 +67,9 @@ class BerryPieChatbot:
             Respond professionally: "I don't have any active financial product details to reference at this time.
             Would you like general information about our services?"
             """
-        
+        logging.info(f"System prompt initialized: {system_prompt}")
+
+        # Append the system prompt to the history
         # Clean up whitespace and newlines
         system_prompt = "\n".join(line.strip() for line in system_prompt.split("\n"))
         self.history.append({"role": "system", "content": system_prompt.strip()})
