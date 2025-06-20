@@ -31,7 +31,7 @@ class BerryPieChatbot:
             If the transcript doesn't contain the answer but these documents do, use them to respond.
             Document content:
             \"\"\"
-            {self.doc_content}
+            {self.doc_content[:10000]}
             \"\"\"
             If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
             """
