@@ -23,7 +23,7 @@ class BerryPieChatbot:
     def _initialize_system_message(self):
         """Initialize the system message with transcript and document context."""
         # Document content note (only if doc_content exists)
-        doc_context = ""
+
         if self.doc_content:
             doc_context = f"""
             ADDITIONAL CONTEXT:
@@ -35,6 +35,8 @@ class BerryPieChatbot:
             \"\"\"
             If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
             """
+        else:
+            doc_context = ""
         
         # Main system prompt construction
         if self.transcript:
