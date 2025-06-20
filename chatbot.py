@@ -28,20 +28,20 @@ class BerryPieChatbot:
             If the transcript doesn't contain the answer but these documents do, use them to respond.
             Document content:
             \"\"\"
-            {self.doc_content}  # Limit to first 10k chars to avoid token limits
+            {self.doc_content}
             \"\"\"
             If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
             """
         
         # Main system prompt construction
         if self.transcript:
-            system_prompt = f"""
+            video_prompt = f"""
             ROLE: Financial assistant for BerryPie (investment products expert)
             TONE: Professional yet approachable (clear, precise, compliant)
             
             PRIMARY SOURCE: Video transcript:
             \"\"\"
-            {self.transcript[:15000]}  # Limit transcript length
+            {self.transcript}
             \"\"\"
             
             INSTRUCTIONS:
@@ -50,13 +50,14 @@ class BerryPieChatbot:
             3. For unavailable information: "Based on my resources, I can't provide a definitive answer."
             4. Never speculate - admit uncertainty when needed
             
-            {doc_context}
-            
             RESPONSE FORMAT:
             - Start with clear answer
             - Add supporting details when relevant
             - End with "Does this help?" or similar
             """
+
+        if self.transcript:
+            system_prompt = video_prompt + doc_context
         else:
             system_prompt = """
             You're BerryPie's financial assistant, but no product information is currently available.
