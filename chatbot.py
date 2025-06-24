@@ -24,23 +24,23 @@ class BerryPieChatbot:
         """Initialize the system message with transcript and document context."""
         # Document content note (only if doc_content exists)
 
-        if self.doc_content:
-            doc_context = f"""
-            ADDITIONAL CONTEXT:
-            You also have access to financial documents (prospectuses and fact sheets).
-            If the transcript doesn't contain the answer but these documents do, use them to respond.
-            Document content:
-            \"\"\"
-            {self.doc_content[:7000]}
-            \"\"\"
-            If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
-            """
-        else:
-            doc_context = ""
+        # if self.doc_content:
+        #     doc_context = f"""
+        #     ADDITIONAL CONTEXT:
+        #     You also have access to financial documents (prospectuses and fact sheets).
+        #     If the transcript doesn't contain the answer but these documents do, use them to respond.
+        #     Document content:
+        #     \"\"\"
+        #     {self.doc_content[:7000]}
+        #     \"\"\"
+        #     If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
+        #     """
+        # else:
+        #     doc_context = ""
         
         # Main system prompt construction
-        if self.transcript:
-            video_prompt = f"""
+        if self.transcript and not self.doc_content:
+            system_prompt = f"""
             ROLE: Financial assistant for BerryPie (investment products expert)
             TONE: Professional yet approachable (clear, precise, compliant)
             
@@ -61,10 +61,36 @@ class BerryPieChatbot:
             - End with "Does this help?" or similar
             """
 
-        if self.transcript and self.doc_content:
-            system_prompt = video_prompt + doc_context
-        elif self.transcript and self.doc_content == "":
-            system_prompt = video_prompt
+        elif self.transcript and self.doc_content:
+            system_prompt = f"""
+            ROLE: Financial assistant for BerryPie (investment products expert)
+            TONE: Professional yet approachable (clear, precise, compliant)
+            
+            PRIMARY SOURCE: Video transcript:
+            \"\"\"
+            {self.transcript}
+            \"\"\"
+            
+            INSTRUCTIONS:
+            1. Prioritize answers from the transcript
+            2. Only use document context when transcript is insufficient
+            3. For unavailable information: "Based on my resources, I can't provide a definitive answer."
+            4. Never speculate - admit uncertainty when needed
+            
+            RESPONSE FORMAT:
+            - Start with clear answer
+            - Add supporting details when relevant
+            - End with "Does this help?" or similar
+            
+            ADDITIONAL CONTEXT:
+            You also have access to financial documents (prospectuses and fact sheets).
+            If the transcript doesn't contain the answer but these documents do, use them to respond.
+            Document content:
+            \"\"\"
+            {self.doc_content[:7000]}
+            \"\"\"
+            If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
+            """
         else:
             system_prompt = """
             You're BerryPie's financial assistant, but no product information is currently available.
