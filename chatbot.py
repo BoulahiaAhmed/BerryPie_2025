@@ -52,7 +52,7 @@ class BerryPieChatbot:
             If the transcript doesn't contain the answer but these documents do, use them to respond.
             Document content:
             \"\"\"
-            {self.doc_content[:7000]}
+            {self.doc_content[:5000]}
             \"\"\"
             If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
             """.strip() if self.doc_content else ""
@@ -70,6 +70,8 @@ class BerryPieChatbot:
             )
 
         logging.info(f"System prompt initialized: {system_prompt}")
+        logging.info("-----------------------------------------------------")
+        logging.info(f"doc_section: {doc_section}")
 
         # Append the system prompt to the history
         # Clean up whitespace and newlines
