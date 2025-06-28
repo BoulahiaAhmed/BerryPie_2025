@@ -14,74 +14,39 @@ MODEL_NAME = "llama-3.3-70b-versatile"
 
 
 class BerryPieChatbot:
+
     def __init__(self, transcript: str, doc_content: str):
-        self.transcript = transcript
-        self.doc_content = doc_content
+        self.transcript = transcript.strip() if transcript else ""
+        self.doc_content = doc_content.strip() if doc_content else ""
         self.history = []
         self._initialize_system_message()
 
     def _initialize_system_message(self):
         """Initialize the system message with transcript and document context."""
-        # Document content note (only if doc_content exists)
-
-        # if self.doc_content:
-        #     doc_context = f"""
-        #     ADDITIONAL CONTEXT:
-        #     You also have access to financial documents (prospectuses and fact sheets).
-        #     If the transcript doesn't contain the answer but these documents do, use them to respond.
-        #     Document content:
-        #     \"\"\"
-        #     {self.doc_content[:7000]}
-        #     \"\"\"
-        #     If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
-        #     """
-        # else:
-        #     doc_context = ""
-        
-        # Main system prompt construction
-        if self.transcript and not self.doc_content:
-            system_prompt = f"""
+        base_prompt = """
             ROLE: Financial assistant for BerryPie (investment products expert)
             TONE: Professional yet approachable (clear, precise, compliant)
-            
-            PRIMARY SOURCE: Video transcript:
-            \"\"\"
-            {self.transcript}
-            \"\"\"
-            
+
             INSTRUCTIONS:
             1. Prioritize answers from the transcript
             2. Only use document context when transcript is insufficient
             3. For unavailable information: "Based on my resources, I can't provide a definitive answer."
             4. Never speculate - admit uncertainty when needed
-            
+
             RESPONSE FORMAT:
             - Start with clear answer
             - Add supporting details when relevant
             - End with "Does this help?" or similar
-            """
+            """.strip()
 
-        elif self.transcript and self.doc_content:
-            system_prompt = f"""
-            ROLE: Financial assistant for BerryPie (investment products expert)
-            TONE: Professional yet approachable (clear, precise, compliant)
-            
+        transcript_section = f"""
             PRIMARY SOURCE: Video transcript:
             \"\"\"
             {self.transcript}
             \"\"\"
-            
-            INSTRUCTIONS:
-            1. Prioritize answers from the transcript
-            2. Only use document context when transcript is insufficient
-            3. For unavailable information: "Based on my resources, I can't provide a definitive answer."
-            4. Never speculate - admit uncertainty when needed
-            
-            RESPONSE FORMAT:
-            - Start with clear answer
-            - Add supporting details when relevant
-            - End with "Does this help?" or similar
-            
+            """.strip() if self.transcript else ""
+
+        doc_section = f"""
             ADDITIONAL CONTEXT:
             You also have access to financial documents (prospectuses and fact sheets).
             If the transcript doesn't contain the answer but these documents do, use them to respond.
@@ -90,13 +55,20 @@ class BerryPieChatbot:
             {self.doc_content[:7000]}
             \"\"\"
             If the document content is unavailable or irrelevant, say: "I don't have sufficient documentation to answer that."
-            """
-        else:
+            """.strip() if self.doc_content else ""
+
+        if not self.transcript and not self.doc_content:
             system_prompt = """
-            You're BerryPie's financial assistant, but no product information is currently available.
-            Respond professionally: "I don't have any active financial product details to reference at this time.
-            Would you like general information about our services?"
-            """
+                You're BerryPie's financial assistant, but no product information is currently available.
+                Respond professionally: "I don't have any active financial product details to reference at this time.
+                Would you like general information about our services?"
+                """.strip()
+        else:
+            system_prompt = "\n".join(
+                part for part in [base_prompt, transcript_section, doc_section] 
+                if part
+            )
+
         logging.info(f"System prompt initialized: {system_prompt}")
 
         # Append the system prompt to the history
