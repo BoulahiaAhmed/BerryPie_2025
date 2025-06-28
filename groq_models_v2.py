@@ -193,9 +193,9 @@ def video_card_generation(transcript: str, model: str) -> str:
 @st.cache_resource
 def reviewed_transcript(transcript: str, partes_and_suggestions_to_follow: list[dict], model: str):
     system_message = """ Your task is to update only the specific sections in the provided text based on the suggestions given.
-    Make sure not to alter any other parts of the text. The overall tone should remain consistent, professional, and appropriate for a financial product.
-    This updated text will be used as a video transcript for a financial product, so it must be clear.
-    Return the final updated text in a JSON format under the key 'optimized_transcript'."""
+        Make sure not to alter any other parts of the text. The overall tone should remain consistent, professional, and appropriate for a financial product.
+        This updated text will be used as a video transcript for a financial product, so it must be clear.
+        Return the final updated text in a JSON format under the key 'optimized_transcript'."""
 
     try:
         client = Groq(api_key=GROQ_API_KEY)

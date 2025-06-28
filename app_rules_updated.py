@@ -105,6 +105,7 @@ transcript_text = ""
 
 
 # Define the main function
+@st.cache_resource
 def main_app():
     # Set the title of the app
     st.image("./logo.png", width=200)
@@ -178,31 +179,6 @@ def main_app():
     if 'doc_content' not in st.session_state:
         st.session_state['doc_content'] = doc_content
         logging.info("doc_content added in session state.")
-
-
-
-
-
-    # st.divider()
-    # st.subheader('✨ AI Model Selection')
-    # # Dropdown to select the model
-    # appearing_model_name = st.radio("Select Model", ['llama-3.1-70b', 'llama-3.2-90b', 'mixtral-8x7b', 'gemma2-9b'], horizontal=True)
-
-    # if appearing_model_name == 'llama-3.1-70b':
-    #     model_name = 'llama-3.1-70b-versatile'
-    #     st.info("Rate limit: 30 Request Per Minute")
-
-    # if appearing_model_name == 'llama-3.2-90b':
-    #     model_name = 'llama-3.2-90b-text-preview'
-    #     st.info("Rate limit: 30 Request Per Minute")
-
-    # if appearing_model_name == 'mixtral-8x7b':
-    #     model_name = 'mixtral-8x7b-32768'
-    #     st.info("Rate limit: 30 Request Per Minute")
-
-    # if appearing_model_name == 'gemma2-9b':
-    #     model_name = 'gemma2-9b-it'
-    #     st.info("Rate limit: 30 Request Per Minute")
 
     # default model selected 'llama-3.2-90b-text-preview'
     model_name = 'llama-3.3-70b-versatile'
@@ -360,6 +336,7 @@ def main_app():
 
 
 # Define your chatbot page
+@st.cache_resource
 def chatbot_page():
     # Get the transcript from session state or set a default value
     if 'sales_deck' in st.session_state:
