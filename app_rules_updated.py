@@ -178,7 +178,7 @@ def main_app():
     if 'doc_content' not in st.session_state:
         st.session_state['doc_content'] = doc_content
         logging.info("doc_content added in session state.")
-        logging.info(f"doc_content is: {doc_content[:100]}...")  # Log first 100 characters for brevity
+        logging.info(f"doc_content is: {doc_content}...")  # Log first 100 characters for brevity
 
     # default model selected 'llama-3.2-90b-text-preview'
     model_name = 'llama-3.3-70b-versatile'
