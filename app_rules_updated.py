@@ -105,7 +105,6 @@ transcript_text = ""
 
 
 # Define the main function
-@st.cache_resource
 def main_app():
     # Set the title of the app
     st.image("./logo.png", width=200)
@@ -336,7 +335,6 @@ def main_app():
 
 
 # Define your chatbot page
-@st.cache_resource
 def chatbot_page():
     # Get the transcript from session state or set a default value
     if 'sales_deck' in st.session_state:
@@ -351,13 +349,13 @@ def chatbot_page():
         doc_content = st.session_state['doc_content']
         logging.info("doc_content loaded from session state.")
     else:
-        doc_content = None
+        doc_content = ""
         logging.info("No doc_content found in session state. Using default value.")
 
     if 'chatbot' not in st.session_state:
         st.session_state.chatbot = BerryPieChatbot(
             transcript,
-            doc_content=doc_content
+            doc_content
         )
 
     chatbot = st.session_state.chatbot

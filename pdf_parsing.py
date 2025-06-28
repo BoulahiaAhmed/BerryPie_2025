@@ -37,34 +37,6 @@ def process_pdf(paths: List[str]) -> str:
     logger.info(f"Extracted {len(all_text)} pages of text")
     return combined_text
 
-    # # 2. Split documents
-    # text_splitter = RecursiveCharacterTextSplitter(
-    #     chunk_size=1500,
-    #     chunk_overlap=200,
-    #     separators=["\n\n", "\n", " ", ""]  # Better handling for PDFs
-    # )
-    # chunks = text_splitter.split_documents(all_docs)
-    # logger.info(f"Split into {len(chunks)} chunks")
-
-    # # 3. Initialize Embeddings (HuggingFace)
-    # model_name = "sentence-transformers/all-MiniLM-L6-v2"  # Lightweight & effective
-    # embeddings = HuggingFaceEmbeddings(
-    #     model_name=model_name,
-    #     model_kwargs={'device': 'cpu'},  # Force CPU for Streamlit
-    #     encode_kwargs={'normalize_embeddings': True}  # Better for similarity
-    # )
-
-    # # 4. Create FAISS index
-    # vectordb = FAISS.from_documents(
-    #     documents=chunks,
-    #     embedding=embeddings
-    # )
-    # logger.info("Created FAISS vector store")
-    # # Save
-    # vectordb.save_local("faiss_index")
-    # return vectordb
-
-
 # Function to search the retriever with a query
 def rag_tool(query: str, vectordb) -> list:
     """
