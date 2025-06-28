@@ -37,6 +37,7 @@ def process_pdf(paths: List[str]) -> str:
 
     combined_text = "\n\n".join(all_text)
     logger.info(f"Extracted text from {len(all_text)} page(s) in total")
+    logger.info(f"Extracted text is: {combined_text[:100]}")
     return combined_text
 
 
