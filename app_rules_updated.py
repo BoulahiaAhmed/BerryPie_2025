@@ -161,24 +161,25 @@ def main_app():
 
         saved_paths = []
         for pdf_file in pdf_files:
-            temp_pdf_path = os.path.join(temp_pdf_dir, pdf_file.name)
+            temp_pdf_path = os.path.join(temp_pdf_dir, f"{int(time.time())}_{pdf_file.name}")
             with open(temp_pdf_path, "wb") as f:
-                f.write(pdf_file.read())
+                f.write(pdf_file.getbuffer())  # Changed from read() to getbuffer()
             saved_paths.append(temp_pdf_path)
 
-        # Pass list of saved PDF paths
-        doc_content = process_pdf(saved_paths)
-
-        st.success("All PDFs processed ")
+        # Add processing state check
+        if 'processing' not in st.session_state:
+            st.session_state.processing = True
+            doc_content = process_pdf(saved_paths)
+            
+            # Only update content after processing completes
+            st.session_state['doc_content'] = doc_content
+            st.session_state.processing = False
+            logging.info(f"PDF processing completed. Content length: {len(doc_content) if doc_content else 0}")
+            
+        st.success("PDF processing done")
     else:
-        doc_content = None
+        st.session_state['doc_content'] = None
         st.info("No PDF files uploaded.")
-
-    # update the session state
-    if 'doc_content' not in st.session_state:
-        st.session_state['doc_content'] = doc_content
-        logging.info("doc_content added in session state.")
-        logging.info(f"doc_content is: {doc_content}...")  # Log first 100 characters for brevity
 
     # default model selected 'llama-3.2-90b-text-preview'
     model_name = 'llama-3.3-70b-versatile'
